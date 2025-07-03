@@ -5,6 +5,42 @@ interface NotesProps {
   params: Promise<{ slug: string[] }>;
 }
 
+export async function generateMetadata({ params }: NotesProps) {
+  const { slug } = await params;
+  const tag = slug[0] === "all" ? undefined : slug[0];
+  return {
+    title: `Notes: ${tag ? `${tag}` : "all"}`,
+    description: `Note: ${tag || "all"} — created in Notehub.`,
+    url: `https://08-zustand-beta.vercel.app/notes/filter/${slug.join("/")}`,
+    openGraph: {
+      title: `Notes: ${tag ? `${tag}` : "all"}`,
+      description: `Note: ${tag || "all"} — created in Notehub.`,
+      url: `https://08-zustand-beta.vercel.app/notes/filter/${slug.join("/")}`,
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          width: 1200,
+          height: 630,
+          alt: "notehub image",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Notes: ${tag ? `${tag}` : "all"}`,
+      description: `Note: ${tag || "all"} — created in Notehub.`,
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          width: 1200,
+          height: 630,
+          alt: "notehub image",
+        },
+      ],
+    },
+  };
+}
+
 export const revalidate = 60;
 
 export default async function Notes({ params }: NotesProps) {
