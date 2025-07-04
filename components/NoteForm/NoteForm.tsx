@@ -1,36 +1,12 @@
 "use client";
 
-// import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from "formik";
-// import * as Yup from "yup";
-import type { CreateNoteValues } from "../../types/note";
+import type { CreateNoteValues, Tag } from "../../types/note";
 import css from "./NoteForm.module.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNote } from "../../lib/api";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { initialDraft, useDraftStore } from "@/lib/store/noteStore";
-
-// const validationSchema = Yup.object().shape({
-//   title: Yup.string()
-//     .min(3, "To short!")
-//     .max(50, "To long!")
-//     .required("Title is required!"),
-//   content: Yup.string().max(500),
-//   tag: Yup.string()
-//     .oneOf(["Work", "Personal", "Meeting", "Shopping", "Todo"])
-//     .required("Tag is required!"),
-// });
-
-// const initialValues: CreateNoteValues = {
-//   title: "",
-//   content: "",
-//   tag: "Todo",
-// };
-
-// export interface NoteFormProps {
-//   onClose: () => void;
-// }
-// { onClose }: NoteFormProps
 
 export default function NoteForm() {
   const router = useRouter();
@@ -43,8 +19,8 @@ export default function NoteForm() {
     mutationFn: createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      // onClose();
       router.push("/notes/filter/all");
+      router.refresh();
       toast.success("Success! Your note has been saved.");
     },
     onError: () => {
@@ -64,11 +40,12 @@ export default function NoteForm() {
   }
 
   function handleSubmit(formData: FormData) {
-    const formValues = Object.fromEntries(
-      formData
-    ) as unknown as CreateNoteValues;
+    const formValues: CreateNoteValues = {
+      title: formData.get("title") as string,
+      content: (formData.get("content") as string) || "",
+      tag: formData.get("tag") as Tag,
+    };
     mutationCreate.mutate(formValues);
-    console.log(formValues);
     clearDraft();
   }
   return (
@@ -84,8 +61,6 @@ export default function NoteForm() {
             defaultValue={draft.title}
             onChange={handleChange}
           />
-          {/* <ErrorMessage name="title" component="span" className={css.error} />
-           */}
         </div>
 
         <div className={css.formGroup}>
@@ -98,7 +73,6 @@ export default function NoteForm() {
             defaultValue={draft.content}
             onChange={handleChange}
           />
-          {/* <ErrorMessage name="content" component="span" className={css.error} /> */}
         </div>
 
         <div className={css.formGroup}>
@@ -116,7 +90,6 @@ export default function NoteForm() {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </select>
-          {/* <ErrorMessage name="tag" component="span" className={css.error} /> */}
         </div>
 
         <div className={css.actions}>
@@ -138,7 +111,6 @@ export default function NoteForm() {
           )}
         </div>
       </form>
-      <Toaster />
     </>
   );
 }
