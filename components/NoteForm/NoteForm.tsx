@@ -18,9 +18,10 @@ export default function NoteForm() {
   const mutationCreate = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({
+        queryKey: ["notes"],
+      });
       router.push("/notes/filter/all");
-      router.refresh();
       toast.success("Success! Your note has been saved.");
     },
     onError: () => {
@@ -60,6 +61,7 @@ export default function NoteForm() {
             className={css.input}
             defaultValue={draft.title}
             onChange={handleChange}
+            required
           />
         </div>
 
@@ -83,6 +85,7 @@ export default function NoteForm() {
             className={css.select}
             defaultValue={draft.tag}
             onChange={handleChange}
+            required
           >
             <option value="Todo">Todo</option>
             <option value="Work">Work</option>
