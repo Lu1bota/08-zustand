@@ -1,17 +1,19 @@
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
+import { Metadata } from "next";
 
 interface NotesProps {
   params: Promise<{ slug: string[] }>;
 }
 
-export async function generateMetadata({ params }: NotesProps) {
+export async function generateMetadata({
+  params,
+}: NotesProps): Promise<Metadata> {
   const { slug } = await params;
   const tag = slug[0] === "all" ? undefined : slug[0];
   return {
     title: `Notes: ${tag ? `${tag}` : "all"}`,
     description: `Note: ${tag || "all"} — created in Notehub.`,
-    url: `https://08-zustand-beta.vercel.app/notes/filter/${slug.join("/")}`,
     openGraph: {
       title: `Notes: ${tag ? `${tag}` : "all"}`,
       description: `Note: ${tag || "all"} — created in Notehub.`,

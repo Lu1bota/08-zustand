@@ -6,14 +6,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNote } from "../../lib/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { initialDraft, useDraftStore } from "@/lib/store/noteStore";
+import { useDraftStore } from "@/lib/store/noteStore";
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { draft, setDraft, clearDraft } = useDraftStore();
-
-  const formValues = draft ? draft : initialDraft;
 
   const mutationCreate = useMutation({
     mutationFn: createNote,
@@ -35,7 +33,7 @@ export default function NoteForm() {
     >
   ) {
     setDraft({
-      ...formValues,
+      ...draft,
       [event.target.name]: event.target.value,
     });
   }
@@ -99,7 +97,7 @@ export default function NoteForm() {
           <button
             type="button"
             className={css.cancelButton}
-            onClick={() => router.push("/notes/filter/all")}
+            onClick={() => router.back()}
           >
             Cancel
           </button>
